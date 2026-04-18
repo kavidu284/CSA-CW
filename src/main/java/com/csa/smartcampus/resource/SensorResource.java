@@ -1,25 +1,14 @@
 package com.csa.smartcampus.resource;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriBuilder;
-import javax.ws.rs.core.UriInfo;
-
 import com.csa.smartcampus.model.Room;
 import com.csa.smartcampus.model.Sensor;
 import com.csa.smartcampus.store.DataStore;
+
+import javax.ws.rs.*;
+import javax.ws.rs.core.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 @Path("/sensors")
 @Consumes(MediaType.APPLICATION_JSON)
@@ -115,5 +104,10 @@ public class SensorResource {
         }
 
         return Response.ok(sensor).build();
+    }
+
+    @Path("/{sensorId}/readings")
+    public SensorReadingResource getSensorReadingResource(@PathParam("sensorId") String sensorId) {
+        return new SensorReadingResource(sensorId);
     }
 }
