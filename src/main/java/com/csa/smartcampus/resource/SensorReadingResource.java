@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import javax.ws.rs.BadRequestException;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -14,6 +15,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
+import com.csa.smartcampus.exception.ResourceNotFoundException;
+import com.csa.smartcampus.exception.SensorUnavailableException;
 import com.csa.smartcampus.model.Sensor;
 import com.csa.smartcampus.model.SensorReading;
 import com.csa.smartcampus.store.DataStore;
@@ -33,13 +36,10 @@ public class SensorReadingResource {
     @GET
     public Response getAllReadings() {
         if (!sensors.containsKey(sensorId)) {
-            return Response.status(Response.Status.NOT_FOUND)
-                    .entity("Sensor not found")
-                    .build();
+            throw new ResourceNotFoundException("Sensor not found");
         }
 
         List<SensorReading> sensorReadings = readings.get(sensorId);
-
         if (sensorReadings == null) {
             sensorReadings = new ArrayList<>();
         }
@@ -52,21 +52,15 @@ public class SensorReadingResource {
         Sensor sensor = sensors.get(sensorId);
 
         if (sensor == null) {
-            return Response.status(Response.Status.NOT_FOUND)
-                    .entity("Sensor not found")
-                    .build();
+            throw new ResourceNotFoundException("Sensor not found");
+        }
+
+        if ("MAINTENANCE".equalsIgnoreCase(sensor.getStatus())) {
+            throw new SensorUnavailableException("Sensor is under maintenance and cannot accept new readings");
         }
 
         if (reading == null) {
-            return Response.status(Response.Status.BAD_REQUEST)
-                    .entity("Reading data is required")
-                    .build();
-        }
-
-        if (reading.getValue() == 0) {
-            return Response.status(Response.Status.BAD_REQUEST)
-                    .entity("Reading value is required")
-                    .build();
+            throw new BadRequestException("Reading data is required");
         }
 
         if (reading.getId() == null || reading.getId().trim().isEmpty()) {
@@ -84,11 +78,8 @@ public class SensorReadingResource {
         }
 
         sensorReadings.add(reading);
-
         sensor.setCurrentValue(reading.getValue());
 
-        return Response.status(Response.Status.CREATED)
-                .entity(reading)
-                .build();
+        return Response.status(Response.Status.CREATED).entity(reading).build();
     }
 }

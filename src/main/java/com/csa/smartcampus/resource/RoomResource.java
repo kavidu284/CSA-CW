@@ -1,9 +1,9 @@
 package com.csa.smartcampus.resource;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
+import javax.ws.rs.BadRequestException;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -17,6 +17,9 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 
+import com.csa.smartcampus.exception.ResourceAlreadyExistsException;
+import com.csa.smartcampus.exception.ResourceNotFoundException;
+import com.csa.smartcampus.exception.RoomNotEmptyException;
 import com.csa.smartcampus.model.Room;
 import com.csa.smartcampus.store.DataStore;
 
@@ -29,40 +32,25 @@ public class RoomResource {
 
     @GET
     public Response getAllRooms() {
-        List<Room> roomList = new ArrayList<>(rooms.values());
-        return Response.ok(roomList).build();
+        return Response.ok(new ArrayList<>(rooms.values())).build();
     }
 
     @POST
     public Response createRoom(Room room, @Context UriInfo uriInfo) {
         if (room == null) {
-            return Response.status(Response.Status.BAD_REQUEST)
-                    .entity("Room data is required")
-                    .build();
+            throw new BadRequestException("Room data is required");
         }
-
         if (room.getId() == null || room.getId().trim().isEmpty()) {
-            return Response.status(Response.Status.BAD_REQUEST)
-                    .entity("Room ID is required")
-                    .build();
+            throw new BadRequestException("Room ID is required");
         }
-
         if (room.getName() == null || room.getName().trim().isEmpty()) {
-            return Response.status(Response.Status.BAD_REQUEST)
-                    .entity("Room name is required")
-                    .build();
+            throw new BadRequestException("Room name is required");
         }
-
         if (room.getCapacity() <= 0) {
-            return Response.status(Response.Status.BAD_REQUEST)
-                    .entity("Room capacity must be greater than 0")
-                    .build();
+            throw new BadRequestException("Room capacity must be greater than 0");
         }
-
         if (rooms.containsKey(room.getId())) {
-            return Response.status(Response.Status.CONFLICT)
-                    .entity("Room with this ID already exists")
-                    .build();
+            throw new ResourceAlreadyExistsException("Room with this ID already exists");
         }
 
         if (room.getSensorIds() == null) {
@@ -70,25 +58,18 @@ public class RoomResource {
         }
 
         rooms.put(room.getId(), room);
-
         UriBuilder builder = uriInfo.getAbsolutePathBuilder().path(room.getId());
 
-        return Response.created(builder.build())
-                .entity(room)
-                .build();
+        return Response.created(builder.build()).entity(room).build();
     }
 
     @GET
     @Path("/{roomId}")
     public Response getRoomById(@PathParam("roomId") String roomId) {
         Room room = rooms.get(roomId);
-
         if (room == null) {
-            return Response.status(Response.Status.NOT_FOUND)
-                    .entity("Room not found")
-                    .build();
+            throw new ResourceNotFoundException("Room not found");
         }
-
         return Response.ok(room).build();
     }
 
@@ -96,21 +77,14 @@ public class RoomResource {
     @Path("/{roomId}")
     public Response deleteRoom(@PathParam("roomId") String roomId) {
         Room room = rooms.get(roomId);
-
         if (room == null) {
-            return Response.status(Response.Status.NOT_FOUND)
-                    .entity("Room not found")
-                    .build();
+            throw new ResourceNotFoundException("Room not found");
         }
-
         if (room.getSensorIds() != null && !room.getSensorIds().isEmpty()) {
-            return Response.status(Response.Status.CONFLICT)
-                    .entity("Cannot delete room because sensors are still assigned to it")
-                    .build();
+            throw new RoomNotEmptyException("Cannot delete room because sensors are still assigned to it");
         }
 
         rooms.remove(roomId);
-
-        return Response.ok("Room deleted successfully").build();
+        return Response.ok("{\"message\":\"Room deleted successfully\"}").build();
     }
 }
