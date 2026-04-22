@@ -52,7 +52,7 @@ CSA-CW/
 
 🔹 Steps
 
-1. Clone the repository: git clone <https://github.com/kavidu284/SmartCampusAPI.git>
+1. Clone the repository: git clone <https://github.com/kavidu284/CSA-CW.git>
 
 2. Open project in **NetBeans**
 3. Configure **Apache Tomcat** in:
