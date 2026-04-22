@@ -7,23 +7,16 @@ IIT ID: 20240287
 ## Overview
 
 Hi! I am Kavidu. This is my project for the Client-Server Architectures coursework.
-It is a RESTful API designed to manage rooms and sensors in a smart campus environment.
+It is a RESTful API used to manage rooms and sensors in a smart campus system.
 
-The system allows:
+The API supports:
 
-Managing rooms
-Registering sensors
-Recording sensor readings
+Room management
+Sensor registration
+Sensor readings tracking
 
-I built this using Java, JAX-RS (Jersey), Maven, and Apache Tomcat.
-All data is stored in memory, making the system fast, but data resets when the server restarts.
-It manages:
-
- Rooms
- Sensors
- Sensor Readings
-
-The system demonstrates REST principles, nested resources, error handling, and logging.
+This project is built using Java, JAX-RS (Jersey), Maven, and Apache Tomcat.
+All data is stored in memory, so it is fast, but data resets when the server restarts.
 
 ---
 
