@@ -1,7 +1,5 @@
 package com.csa.smartcampus.config;
 
-import javax.ws.rs.ApplicationPath;
-
 import org.glassfish.jersey.server.ResourceConfig;
 
 import com.csa.smartcampus.exception.mapper.GlobalExceptionMapper;
@@ -15,7 +13,6 @@ import com.csa.smartcampus.resource.DiscoveryResource;
 import com.csa.smartcampus.resource.RoomResource;
 import com.csa.smartcampus.resource.SensorResource;
 
-@ApplicationPath("/api/v1")
 public class AppConfig extends ResourceConfig {
 
     public AppConfig() {
