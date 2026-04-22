@@ -231,3 +231,66 @@ This project successfully demonstrates:
 The application is deployed using Apache Tomcat and is fully functional.
 
 ---
+
+## Coursework Answers
+
+### 1. JAX-RS Resource Lifecycle
+
+By default, JAX-RS creates a new instance of a resource class for each HTTP request. This ensures thread safety and avoids shared state between requests.
+
+---
+
+### 2. HATEOAS
+
+HATEOAS (Hypermedia as the Engine of Application State) means including links in API responses so clients can discover available actions dynamically.
+
+---
+
+### 3. Why use roomId instead of embedding full Room object
+
+Using `roomId` avoids duplication, reduces payload size, and maintains separation between resources. It also prevents inconsistency when room data changes.
+
+---
+
+### 4. DELETE idempotency
+
+DELETE is idempotent because calling it multiple times produces the same result (resource remains deleted).
+
+---
+
+### 5. What happens if Content-Type is not JSON
+
+If the request body is not JSON, the server will return **415 Unsupported Media Type**, because the endpoint expects `application/json`.
+
+---
+
+### 6. QueryParam vs filtering in code
+
+Using `@QueryParam` allows filtering directly through the URL, making APIs flexible and RESTful without requiring multiple endpoints.
+
+---
+
+### 7. Sub-resource locator advantage
+
+Sub-resource locators allow hierarchical resource design and improve modularity by delegating handling of nested resources.
+
+---
+
+### 8. Why use 422 instead of 404
+
+422 is used when the request is syntactically correct but semantically invalid (e.g., invalid roomId).
+404 is used when a resource does not exist.
+
+---
+
+### 9. Risk of returning stack trace
+
+Returning stack traces exposes internal implementation details and creates security risks. Instead, user-friendly error messages should be returned.
+
+---
+
+### 10. Why use filters for logging
+
+Filters allow centralized logging without modifying each resource method, improving maintainability and separation of concerns.
+
+---
