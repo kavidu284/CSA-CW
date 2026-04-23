@@ -24,6 +24,7 @@ import com.csa.smartcampus.exception.ResourceNotFoundException;
 import com.csa.smartcampus.model.Room;
 import com.csa.smartcampus.model.Sensor;
 import com.csa.smartcampus.store.DataStore;
+import javax.ws.rs.DELETE;
 
 @Path("/sensors")
 @Consumes(MediaType.APPLICATION_JSON)
@@ -96,5 +97,24 @@ public class SensorResource {
     @Path("/{sensorId}/readings")
     public SensorReadingResource getSensorReadingResource(@PathParam("sensorId") String sensorId) {
         return new SensorReadingResource(sensorId);
+    }
+    @DELETE
+    @Path("/{sensorId}")
+    public Response deleteSensor(@PathParam("sensorId") String sensorId) {
+        Sensor sensor = sensors.get(sensorId);
+
+        if (sensor == null) {
+            throw new ResourceNotFoundException("Sensor not found");
+        }
+
+        Room room = rooms.get(sensor.getRoomId());
+        if (room != null && room.getSensorIds() != null) {
+            room.getSensorIds().remove(sensorId);
+        }
+
+        sensors.remove(sensorId);
+        DataStore.getInstance().getReadings().remove(sensorId);
+
+        return Response.noContent().build();
     }
 }
