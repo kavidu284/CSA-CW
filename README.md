@@ -236,61 +236,63 @@ The application is deployed using Apache Tomcat and is fully functional.
 
 ### 1. JAX-RS Resource Lifecycle
 
-By default, JAX-RS creates a new instance of a resource class for each HTTP request. This ensures thread safety and avoids shared state between requests.
+JAX-RS creates a new instance of a resource class for each HTTP request. This ensures thread safety because no shared state is kept between requests.
 
 ---
 
-### 2. HATEOAS
+### 2. What is HATEOAS
 
-HATEOAS (Hypermedia as the Engine of Application State) means including links in API responses so clients can discover available actions dynamically.
+HATEOAS (Hypermedia as the Engine of Application State) is a REST principle where the server provides links in responses so clients can dynamically navigate available actions.
 
 ---
 
 ### 3. Why use roomId instead of embedding full Room object
 
-Using `roomId` avoids duplication, reduces payload size, and maintains separation between resources. It also prevents inconsistency when room data changes.
+Using `roomId` avoids duplication, reduces response size, and keeps resources independent. It also prevents inconsistencies when room data changes.
 
 ---
 
-### 4. DELETE idempotency
+### 4. Why DELETE is idempotent
 
-DELETE is idempotent because calling it multiple times produces the same result (resource remains deleted).
+DELETE is idempotent because calling it multiple times has the same result. After the resource is deleted, further DELETE requests do not change the system state.
 
 ---
 
 ### 5. What happens if Content-Type is not JSON
 
-If the request body is not JSON, the server will return **415 Unsupported Media Type**, because the endpoint expects `application/json`.
+If the request body is not JSON, the server returns **415 Unsupported Media Type**, because the API expects `application/json`.
 
 ---
 
-### 6. QueryParam vs filtering in code
+### 6. Why use @QueryParam instead of multiple endpoints
 
-Using `@QueryParam` allows filtering directly through the URL, making APIs flexible and RESTful without requiring multiple endpoints.
+`@QueryParam` allows flexible filtering using URL parameters (e.g., `/sensors?type=Temperature`) without creating separate endpoints, making the API cleaner and more scalable.
 
 ---
 
-### 7. Sub-resource locator advantage
+### 7. Advantage of sub-resource locator
 
-Sub-resource locators allow hierarchical resource design and improve modularity by delegating handling of nested resources.
+Sub-resource locators allow hierarchical design by delegating handling of nested resources. This improves modularity and code organization.
 
 ---
 
 ### 8. Why use 422 instead of 404
 
-422 is used when the request is syntactically correct but semantically invalid (e.g., invalid roomId).
+422 is used when the request is valid but contains incorrect data (e.g., invalid roomId).
 404 is used when a resource does not exist.
 
 ---
 
-### 9. Risk of returning stack trace
+### 9. Risk of returning stack trace in API
 
-Returning stack traces exposes internal implementation details and creates security risks. Instead, user-friendly error messages should be returned.
+Returning stack traces exposes internal system details, which can create security vulnerabilities. Instead, user-friendly error messages should be returned.
 
 ---
 
 ### 10. Why use filters for logging
 
-Filters allow centralized logging without modifying each resource method, improving maintainability and separation of concerns.
+Filters provide a centralized way to handle logging for all requests and responses, avoiding repetition in resource classes and improving maintainability.
+
+---
 
 ---
