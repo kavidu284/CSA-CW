@@ -115,6 +115,6 @@ public class SensorResource {
         sensors.remove(sensorId);
         DataStore.getInstance().getReadings().remove(sensorId);
 
-        return Response.noContent().build();
+        return Response.ok("{\"message\":\"Room deleted successfully\"}").build();
     }
 }
